@@ -1,9 +1,11 @@
 const EXPRESS = require('express');
 const MYSQL = require('mysql');
+const CORS = require('cors');
 
 const APP = EXPRESS();
 APP.use(EXPRESS.json());
-
+//cors or CORS
+APP.use(CORS());
 
 //Establish parameters of connection
 const CONNECTION = MYSQL.createConnection({
