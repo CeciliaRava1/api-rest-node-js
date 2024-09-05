@@ -2,6 +2,8 @@ const EXPRESS = require('express');
 const MYSQL = require('mysql');
 
 const APP = EXPRESS();
+APP.use(EXPRESS.json());
+
 
 //Establish parameters of connection
 const CONNECTION = MYSQL.createConnection({
@@ -47,6 +49,49 @@ APP.get('/api/products/:id', (req,res) => {
         }
     })
 });
+
+//Create a product
+APP.post('/api/products/', (req,res) => {
+    let data = {description:req.body.description, price:req.body.price, stock:req.body.stock};
+    let sql = 'INSERT INTO products SET ?';
+    CONNECTION.query(sql, data, function (error, results){
+        if(error){
+            throw error;
+        } else {
+            res.send(results);
+        }
+    });
+});
+
+//Modify a product
+APP.put('/api/products/:id', (req, res) =>{
+    let id = req.params.id;
+    let description = req.body.description;
+    let price = req.body.price;
+    let stock = req.body.stock;
+    let sql = "UPDATE products SET description = ?, price = ?, stock = ? WHERE id = ?";
+    CONNECTION.query(sql, [description, price, stock, id], function (error, results){
+        if(error){
+            throw error;
+        } else {
+            res.send(results);
+        }
+    });
+});
+
+//Delete a product
+APP.delete('/api/products/:id', (req, res) =>{
+    CONNECTION.query('DELETE FROM products WHERE id = ?', [req.params.id], function(error, rows){
+        if(error){
+            throw error;
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
+
+
 
 
 const PORT = process.env.PORT || 3000;
